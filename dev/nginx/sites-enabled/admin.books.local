@@ -1,0 +1,17 @@
+server {
+    listen 80;
+    server_name admin.books.local;
+    root /var/www/books-yii/backend/web;
+    index index.php;
+    client_max_body_size 20m;
+
+    location / {
+        try_files $uri $uri/ /index.php?$args;
+    }
+
+    location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_pass unix:/run/php/php-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+}

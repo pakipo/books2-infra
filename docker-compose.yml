@@ -1,0 +1,31 @@
+services:
+  web:
+    build:
+      context: ./docker
+    container_name: books-web
+    ports:
+      - "80:80"
+    volumes:
+      - ../books2-yii:/var/www/books-yii
+      - ./dev/nginx/sites-enabled:/etc/nginx/sites-enabled:ro
+    depends_on:
+      - mysql
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8
+    container_name: books-mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-time-zone=+03:00
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: books
+      MYSQL_USER: books
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  mysql-data:
